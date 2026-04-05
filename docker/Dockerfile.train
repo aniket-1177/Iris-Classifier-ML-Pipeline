@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Dockerfile.train  —  ML Training Container
+# ─────────────────────────────────────────────────────────────────────────────
+FROM python:3.11-slim
+
+LABEL maintainer="your-email@example.com"
+LABEL description="Iris Classifier — Training Pipeline"
+
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cron \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY src/ ./src/
+COPY scripts/ ./scripts/
+COPY crontab.txt .
+
+# Make scripts executable
+RUN chmod +x scripts/run_pipeline.sh
+
+# Create output directories
+RUN mkdir -p models mlruns logs
+
+# Install cron schedule
+RUN crontab crontab.txt
+
+# Default: run training once immediately.
+# For cron mode, override the CMD: `docker run ... cron -f`
+CMD ["python", "scripts/train.py"]

@@ -1,0 +1,97 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Docker Compose for the Iris ML Pipeline
+#
+# Services:
+#   trainer   — runs training once, then exits (use for initial/manual runs)
+#   api       — FastAPI inference server (always running)
+#   mlflow    — MLflow tracking UI
+#
+# Usage:
+#   docker compose up --build          # start everything
+#   docker compose run trainer         # retrain model manually
+#   docker compose up api mlflow       # start only API + MLflow UI
+# ─────────────────────────────────────────────────────────────────────────────
+
+networks:
+  ml_net:
+    driver: bridge
+
+volumes:
+  models_vol:     # shared model artifacts between trainer and API
+  mlruns_vol:     # shared MLflow run data
+
+services:
+
+  # ── MLflow Tracking Server ─────────────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.13.2
+    container_name: mlflow_server
+    command: >
+      mlflow server
+        --backend-store-uri /mlflow/mlruns
+        --default-artifact-root /mlflow/mlruns
+        --host 0.0.0.0
+        --port 5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlruns_vol:/mlflow/mlruns
+    networks:
+      - ml_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Training Pipeline ──────────────────────────────────────────────────────
+  trainer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.train
+    container_name: ml_trainer
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=iris-classifier
+      - LOG_LEVEL=INFO
+    volumes:
+      - models_vol:/app/models
+      - mlruns_vol:/app/mlruns
+    networks:
+      - ml_net
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    # The trainer exits after completing one training run.
+    # To schedule recurring training, change CMD to: cron -f
+    restart: "no"
+
+  # ── FastAPI Inference Server ───────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: ml_api
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - LOG_LEVEL=INFO
+      - API_PORT=8000
+    volumes:
+      - models_vol:/app/models   # reads trained model from shared volume
+    networks:
+      - ml_net
+    depends_on:
+      - trainer
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s

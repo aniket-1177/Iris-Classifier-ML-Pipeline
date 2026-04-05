@@ -1,0 +1,24 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# crontab.txt  —  ML Pipeline Cron Schedule
+#
+# To install this crontab:
+#   crontab crontab.txt
+#
+# To verify it's active:
+#   crontab -l
+#
+# FORMAT:
+#   ┌─ minute (0-59)
+#   │  ┌─ hour (0-23)
+#   │  │  ┌─ day of month (1-31)
+#   │  │  │  ┌─ month (1-12)
+#   │  │  │  │  ┌─ day of week (0=Sun … 6=Sat)
+#   │  │  │  │  │
+#   *  *  *  *  *  command
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Retrain model every Monday at 02:00 AM
+0 2 * * 1 cd /app && bash scripts/run_pipeline.sh >> /var/log/ml_pipeline_cron.log 2>&1
+
+# Optional: retrain daily at midnight (uncomment to enable)
+# 0 0 * * * cd /app && bash scripts/run_pipeline.sh >> /var/log/ml_pipeline_cron.log 2>&1
