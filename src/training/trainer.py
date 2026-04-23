@@ -5,11 +5,10 @@ Runs GridSearchCV, logs params/metrics/artifacts, and saves the best model.
 
 import logging
 import pickle
-from typing import Any, Dict
+from typing import Any
 
 import mlflow
 import mlflow.sklearn
-import pandas as pd
 from sklearn.model_selection import GridSearchCV
 
 from src.config import (
@@ -41,7 +40,7 @@ def _save_artifact(obj: Any, path) -> None:
     logger.info("Saved artifact → %s", path)
 
 
-def run_training() -> Dict[str, Any]:
+def run_training() -> dict[str, Any]:
     """
     End-to-end training run:
       1. Load & split data

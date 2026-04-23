@@ -9,8 +9,6 @@ Run with:
 """
 
 import pickle
-import tempfile
-from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
@@ -20,7 +18,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 from src.inference.predictor import ModelNotFoundError, Predictor
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

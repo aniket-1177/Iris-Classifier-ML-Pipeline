@@ -4,7 +4,6 @@ Handles fetching the dataset and splitting into train/test sets.
 """
 
 import logging
-from typing import Tuple
 
 import pandas as pd
 from sklearn.datasets import load_iris
@@ -16,7 +15,7 @@ from src.config import RANDOM_STATE, TEST_SIZE
 logger = logging.getLogger(__name__)
 
 
-def load_dataset() -> Tuple[pd.DataFrame, pd.Series]:
+def load_dataset() -> tuple[pd.DataFrame, pd.Series]:
     """
     Load the Iris dataset and return as a DataFrame.
 
@@ -44,7 +43,7 @@ def load_dataset() -> Tuple[pd.DataFrame, pd.Series]:
 
 def split_data(
     X: pd.DataFrame, y: pd.Series
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Stratified train/test split.
 

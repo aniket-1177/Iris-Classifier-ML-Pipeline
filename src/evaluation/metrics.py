@@ -4,7 +4,6 @@ Decoupled from training so metrics logic can be tested independently.
 """
 
 import logging
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -23,8 +22,8 @@ logger = logging.getLogger(__name__)
 def compute_metrics(
     y_true: pd.Series,
     y_pred: np.ndarray,
-    class_names: List[str],
-) -> Dict[str, float]:
+    class_names: list[str],
+) -> dict[str, float]:
     """
     Compute a comprehensive set of classification metrics.
 
@@ -56,7 +55,7 @@ def compute_metrics(
     return metrics
 
 
-def log_metrics_table(metrics: Dict[str, float]) -> None:
+def log_metrics_table(metrics: dict[str, float]) -> None:
     """Pretty-print metrics to the logger."""
     logger.info("─" * 45)
     logger.info("%-30s %s", "Metric", "Value")
@@ -69,7 +68,7 @@ def log_metrics_table(metrics: Dict[str, float]) -> None:
 def get_classification_report(
     y_true: pd.Series,
     y_pred: np.ndarray,
-    class_names: List[str],
+    class_names: list[str],
 ) -> str:
     """Return sklearn's full classification report as a string."""
     return classification_report(y_true, y_pred, target_names=class_names)
@@ -78,7 +77,7 @@ def get_classification_report(
 def get_confusion_matrix(
     y_true: pd.Series,
     y_pred: np.ndarray,
-    class_names: List[str],
+    class_names: list[str],
 ) -> pd.DataFrame:
     """Return confusion matrix as a labelled DataFrame."""
     cm = confusion_matrix(y_true, y_pred, labels=class_names)

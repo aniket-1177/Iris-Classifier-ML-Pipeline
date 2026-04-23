@@ -58,7 +58,6 @@ def main() -> None:
     args = parse_args()
 
     # Override config with CLI args if provided
-    import src.config as cfg
     import os
     os.environ["MLFLOW_EXPERIMENT_NAME"] = args.experiment
     os.environ["MLFLOW_TRACKING_URI"] = args.tracking_uri

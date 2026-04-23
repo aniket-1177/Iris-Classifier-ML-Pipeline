@@ -8,7 +8,6 @@ import logging
 import pickle
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -62,7 +61,7 @@ class Predictor:
 
         logger.info("Model loaded from %s", MODEL_PATH)
 
-    def predict(self, features: List[float]) -> Dict:
+    def predict(self, features: list[float]) -> dict:
         """
         Run inference on a single sample.
 
@@ -92,12 +91,12 @@ class Predictor:
             },
         }
 
-    def predict_batch(self, batch: List[List[float]]) -> List[Dict]:
+    def predict_batch(self, batch: list[list[float]]) -> list[dict]:
         """Run inference on multiple samples."""
         return [self.predict(sample) for sample in batch]
 
     @property
-    def model_classes(self) -> List[str]:
+    def model_classes(self) -> list[str]:
         return self._label_encoder.classes_.tolist()
 
 

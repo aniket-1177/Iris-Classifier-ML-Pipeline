@@ -3,9 +3,8 @@ Pydantic request/response schemas for the FastAPI application.
 Provides automatic validation, serialization, and OpenAPI documentation.
 """
 
-from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 
 class PredictRequest(BaseModel):
@@ -24,7 +23,7 @@ class PredictRequest(BaseModel):
         ..., ge=0.0, le=20.0, description="Petal width in cm", example=0.2
     )
 
-    def to_feature_list(self) -> List[float]:
+    def to_feature_list(self) -> list[float]:
         return [
             self.sepal_length,
             self.sepal_width,
@@ -38,7 +37,7 @@ class PredictResponse(BaseModel):
 
     predicted_class: str = Field(..., description="Predicted Iris species")
     confidence: float = Field(..., description="Confidence score of the top prediction")
-    class_probabilities: Dict[str, float] = Field(
+    class_probabilities: dict[str, float] = Field(
         ..., description="Probability per class"
     )
 
@@ -46,7 +45,7 @@ class PredictResponse(BaseModel):
 class BatchPredictRequest(BaseModel):
     """Batch inference request — up to 100 samples."""
 
-    samples: List[PredictRequest] = Field(
+    samples: list[PredictRequest] = Field(
         ..., min_length=1, max_length=100, description="List of samples to predict"
     )
 
@@ -54,7 +53,7 @@ class BatchPredictRequest(BaseModel):
 class BatchPredictResponse(BaseModel):
     """Batch inference response."""
 
-    predictions: List[PredictResponse]
+    predictions: list[PredictResponse]
     total: int
 
 
@@ -63,5 +62,5 @@ class HealthResponse(BaseModel):
 
     status: str
     model_loaded: bool
-    model_classes: Optional[List[str]] = None
+    model_classes: list[str] | None = None
     version: str

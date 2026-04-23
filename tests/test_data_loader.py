@@ -6,7 +6,6 @@ Run with:
 """
 
 import pandas as pd
-import pytest
 
 from src.data.loader import get_label_encoder, load_dataset, split_data
 
