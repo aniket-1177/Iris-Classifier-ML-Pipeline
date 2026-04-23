@@ -21,7 +21,7 @@ router = APIRouter(prefix="/predict", tags=["Inference"])
 
 
 @router.post(
-    "/",
+    "",
     response_model=PredictResponse,
     summary="Single-sample prediction",
     description="Submit one flower's measurements and get the predicted Iris species.",

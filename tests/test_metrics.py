@@ -78,7 +78,8 @@ class TestConfusionMatrix:
     def test_perfect_diagonal(self):
         y_true, y_pred = _make_perfect_labels()
         cm = get_confusion_matrix(y_true, y_pred, CLASSES)
-        assert (cm.values == np.diag(cm.values)).all()
+        # assert (cm.values == np.diag(cm.values)).all()
+        assert np.array_equal(cm.values, np.diag(np.diag(cm.values)))
 
     def test_labels(self):
         y_true, y_pred = _make_perfect_labels()

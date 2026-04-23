@@ -34,7 +34,8 @@ def client():
     mock_predictor.predict_batch.return_value = [MOCK_RESULT, MOCK_RESULT]
     mock_predictor.model_classes = MOCK_CLASSES
 
-    with patch("src.inference.predictor.get_predictor", return_value=mock_predictor):
+    # with patch("src.inference.predictor.get_predictor", return_value=mock_predictor):
+    with patch("api.routers.predict.get_predictor", return_value=mock_predictor):
         from api.main import create_app
 
         app = create_app()
